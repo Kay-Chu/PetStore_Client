@@ -52,8 +52,9 @@ const addComment:any =  (event:any)  => {
       .then(reponse =>{ if(reponse.data.message==="added")
       {
        alert("comment added")
-       navigate("/");
-       window.location.reload();}
+      //  navigate("/");
+       window.location.reload();
+    }
          else(alert("you have post comment already"))
       })
       .catch(err => {

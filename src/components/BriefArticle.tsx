@@ -1,5 +1,6 @@
 import 'antd/dist/reset.css';
 import { Card} from 'antd';
+import React from 'react';
 
 const { Meta } = Card;
 

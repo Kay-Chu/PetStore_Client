@@ -1,5 +1,5 @@
 import 'antd/dist/reset.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Col, Row, Spin } from 'antd';
 import { api } from './common/http-common';
@@ -12,42 +12,62 @@ import Displaycomment from './comments';
 
 
 const FavCard = (props:any) => {
-  const [articles, setArticles] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const [theme, setTheme] = React.useState('outlined');
+
+
+  const [articles, setArticles] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState('outlined');
   const navigate: NavigateFunction = useNavigate();
-  let origin:any=localStorage.getItem('a')
+  // let origin:any=localStorage.getItem('favorite')
    
  
- React.useEffect(()=>{
+ useEffect(()=>{
+
+  axios.get(`${api.uri}/articles`)
+      .then(res => {
+        
+        if (Array.isArray(res.data)) { // Make sure the data is an array
+          
+          let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${api.uri}/articles/fav`,
+            headers: { 
+              'Authorization': `Basic ${localStorage.getItem('aToken')}`
+            }
+          };
+          
+          axios.request(config)
+          .then((results) => {      
+           //console.log(`path ${api.uri}/articles/fav`) 
+           //console.log('results.data ', JSON.stringify(results.data))
+           //console.log('filterting....')
+            let filterArticle = filterPosts(results.data, res.data)
+        
+            setArticles(filterArticle )
+            
+          })    
+            .then(()=>{   
+            setLoading(false); })
+
+
+        } else {
+          console.error('Expected an array of articles, but received:', res.data);
+
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching articles:', error);
+
+      })
   
  // console.log(`path ${api.uri}/articles/fav`)  
   //console.log (`atoken ,Basic ${localStorage.getItem('aToken')}`)         
-  let config = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: `${api.uri}/articles/fav`,
-    headers: { 
-      'Authorization': `Basic ${localStorage.getItem('aToken')}`
-    }
-  };
-  
-  axios.request(config)
-  .then((results) => {      
-   //console.log(`path ${api.uri}/articles/fav`) 
-   //console.log('results.data ', JSON.stringify(results.data))
-   //console.log('filterting....')
-    let filterArticle = filterPosts(results.data, JSON.parse(origin))
-    console.log("filterArticle ", filterArticle)
-    setArticles(filterArticle )
-    
-  })    
-    .then(()=>{   
-    setLoading(false); })
+
  },[])
   
   
-  console.log('after filter article ',articles)
+  // console.log('after filter article ',articles)
   
   function getIcon (theme:string) {
     let Icon;
@@ -62,10 +82,13 @@ const FavCard = (props:any) => {
 
 
   function filterPosts(filterarray:any[], originarray:any[]) 
-  { let resArr:any=[];
+  { 
+    
+    
+    let resArr:any=[];
  
- //  console.log("filterarray.length  ",filterarray.length)
- //  console.log("originarray.length  ",originarray.length)
+  console.log("filterarray  ",filterarray)
+  console.log("originarray  ",originarray)
     for(let i=0; i<filterarray.length;i++)
       for( let j=0; j<originarray.length;j++)
         {
