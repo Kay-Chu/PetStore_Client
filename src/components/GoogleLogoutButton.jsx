@@ -1,27 +1,45 @@
-import React, { useState } from 'react';
-import GoogleLogout from 'react-google-login';
+// GoogleLogoutButton.jsx
+import React from 'react';
+import { useGoogleLogin } from '@react-oauth/google'; 
+import { Button } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
 
-const clientId = "729034240613-tcafn21qn8h2tm47l1uer6lo84hui2l7.apps.googleusercontent.com";
+const GoogleLogoutButton = ({ onSuccess, onFailure }) => {
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_profile');
+      
+      window.location.href = `https://accounts.google.com/logout`;
+      
+      console.log('Logout Success');
+      if (onSuccess) {
+        onSuccess();
+      }
+      
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Logout Failed:', error);
+      if (onFailure) {
+        onFailure(error);
+      }
+    }
+  };
 
-const GoogleLogoutButton = () => {
-    
-const onSuccess = (res) => {
-    console.log("login success!")
-}
-
-const onFailure = (res) => {
-    console.log("login failed!")
-}
-
-    return (
-        <div id="signOutButton" >
-            <GoogleLogout
-            clientId={clientId}
-            buttonText="Logout"
-            onSuccess={onSuccess}
-            />
-        </div>
-    );
+  return (
+    <Button 
+      onClick={handleLogout}
+      icon={<LogoutOutlined />}
+      type="primary" 
+      danger
+      size="large"
+    >
+      Sign Out
+    </Button>
+  );
 };
 
 export default GoogleLogoutButton;

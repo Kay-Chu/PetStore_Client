@@ -1,30 +1,41 @@
-import React, { useState } from 'react';
-import GoogleLogin from 'react-google-login';
+import React from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
-const clientId = "729034240613-tcafn21qn8h2tm47l1uer6lo84hui2l7.apps.googleusercontent.com";
+const GoogleLoginButton = ({ onSuccess, onFailure }) => {
+  // useGoogleLogin hook
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log('Login Success:', tokenResponse);
+      if (onSuccess) {
+        onSuccess(tokenResponse);
+      }
+    },
+    onError: (error) => {
+      console.error('Login Failed:', error);
+      if (onFailure) {
+        onFailure(error);
+      }
+    },
+    scope: 'email profile openid',
+  });
 
-const GoogleLoginButton = () => {
-    
-const onSuccess = (res) => {
-    console.log("login success!res:", res)
-}
-
-const onFailure = (res) => {
-    console.log("login failed!:res:", res)
-}
-
-    return (
-        <div id="signInButton">
-            <GoogleLogin 
-            clientId={clientId}
-            buttonText="Login"
-            onSuccess={onSuccess}
-            onFailure={onFailure}
-            cookiePolicy={'signle_host_origin'}
-            isSignedIn={true}
-            />
-        </div>
-    );
+  return (
+    <Button 
+      onClick={() => login()} 
+      icon={<GoogleOutlined />} 
+      size="large"
+      style={{ 
+        width: '100%', 
+        backgroundColor: '#4285F4', 
+        color: 'white',
+        border: 'none'
+      }}
+    >
+      Continue with Google
+    </Button>
+  );
 };
 
 export default GoogleLoginButton;
