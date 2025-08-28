@@ -1,7 +1,7 @@
 import 'antd/dist/reset.css';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Card, Col, Row, Spin, Tooltip } from 'antd';
+import { Button, Card, Col, Row, Spin, Tooltip } from 'antd';
 import { LoadingOutlined, CloseSquareOutlined, CloseSquareFilled } from '@ant-design/icons';
 import axios from 'axios';
 import { api } from './common/http-common';
@@ -63,42 +63,69 @@ const FavCard = () => {
   }
 
   return (
-    <Row gutter={[24, 24]} className="px-4 md:px-8">
-      {articles.map(({ id, title, alltext, imageurl, links }) => (
-        <Col key={id} xs={24} sm={12} md={8} lg={6}>
-          <Card
-            hoverable
-            className="rounded-2xl shadow-lg transition-transform transform hover:-translate-y-2 hover:shadow-2xl overflow-hidden"
-            cover={
-              <div className="relative w-full h-48 overflow-hidden">
-                {imageurl && (
-                  <img
-                    src={imageurl}
-                    alt={title}
-                    className="w-full h-full object-cover object-center "
-                  />
-                )}
-              </div>
-            }
-            actions={[
-              <Displaycomment msgLink={links.msg} id={id} />,
-              <Tooltip title="Remove from favorites" key="delete">
-                {deletedArticleId === id ? (
-                  <Spin size="small" />
-                ) : (
-                  <CloseSquareOutlined onClick={() => handleDelete({ id, links })} />
-                )}
-              </Tooltip>,
-            ]}
-          >
-            <Link to={`/${id}`} className="text-lg font-semibold text-gray-800 hover:text-fire-bush-500">
+
+  <div className="w-full px-32 justify-center">
+<Row className='mb-6 gap-6'>
+  <Button  type="text" className="bg-gray-200 text-gray-800 rounded-md px-4 py-2 shadow-sm hover:bg-transparent hover:text-gray-800">
+    Recently added
+  </Button>
+  <Button  type="text" className="bg-gray-200 text-gray-800 rounded-md px-4 py-2 shadow-sm hover:bg-transparent hover:text-gray-800">
+    Cats
+  </Button>
+  <Button  type="text" className="bg-gray-200 text-gray-800 rounded-md px-4 py-2 shadow-sm hover:bg-transparent hover:text-gray-800">
+    Dogs
+  </Button>
+</Row>
+
+  <Row gutter={[24, 24]} className='justify-start'>
+  
+  {articles.map(({ id, title, alltext, imageurl, links }) => (
+    <Col key={id} xs={24} sm={12} md={8} lg={6} className='flex justify-start'>
+      <Card
+        hoverable
+        className="rounded-2xl shadow-lg transition-transform transform hover:-translate-y-2 hover:shadow-2xl overflow-hidden flex flex-col w-full h-full"
+        cover={
+          <div className="relative w-full h-48 overflow-hidden">
+            {imageurl && (
+              <img
+                src={imageurl}
+                alt={title}
+                className="w-full h-full object-cover object-center"
+              />
+            )}
+          </div>
+        }
+        actions={[
+          <Displaycomment msgLink={links.msg} id={id} />,
+          <Tooltip title="Remove from favorites">
+            {deletedArticleId === id ? (
+              <Spin size="small" />
+            ) : (
+              <CloseSquareOutlined onClick={() => handleDelete({ id, links })} />
+            )}
+          </Tooltip>,
+        ]}
+      >
+        <div className="flex flex-col justify-between h-full">
+          <div>
+            <Link
+              to={`/${id}`}
+              className="text-lg font-semibold text-gray-800 hover:text-fire-bush-500"
+            >
               {title}
             </Link>
             <p className="text-gray-500 mt-2 line-clamp-3">{alltext}</p>
-          </Card>
-        </Col>
-      ))}
-    </Row>
+          </div>
+        </div>
+      </Card>
+    </Col>
+  ))}
+</Row>
+
+  </div>
+
+
+
   );
 };
 

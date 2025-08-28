@@ -17,18 +17,14 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
 
   useEffect(() => {
     let fetchUrl = `${api.uri}/articles`;
-    if (searchInput !== "" && filter !== "") {
+    if (searchInput && filter) {
       fetchUrl = `${api.uri}/articles/search/${encodeURIComponent(
         searchInput
       )}?filter=${encodeURIComponent(filter.toLowerCase())}`;
-    } else if (searchInput !== "") {
-      fetchUrl = `${api.uri}/articles/search/${encodeURIComponent(
-        searchInput
-      )}`;
-    } else if (filter !== "") {
-      fetchUrl = `${api.uri}/articles/search/?filter=${encodeURIComponent(
-        filter.toLowerCase()
-      )}`;
+    } else if (searchInput) {
+      fetchUrl = `${api.uri}/articles/search/${encodeURIComponent(searchInput)}`;
+    } else if (filter) {
+      fetchUrl = `${api.uri}/articles/search/?filter=${encodeURIComponent(filter.toLowerCase())}`;
     }
 
     axios
@@ -51,7 +47,7 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
-        <AiOutlineLoading3Quarters className="animate-spin text-4xl" />
+        <AiOutlineLoading3Quarters className="animate-spin text-4xl text-fire-bush-500" />
       </div>
     );
   }
@@ -65,37 +61,36 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
   }
 
   return (
-    <div className="py-6 max-w-7xl mx-auto space-y-6">
-      {articles.map(({ id, title, imageurl, links }) => (
+    <div className="py-6 max-w-7xl mx-auto space-y-8">
+      {articles.map(({ id, title, alltext, imageurl, links }) => (
         <div
           key={id}
-          className="flex flex-col md:flex-row bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+          className="flex flex-col md:flex-row bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
         >
           {imageurl && (
-            <img
-              src={imageurl}
-              alt={title}
-              className="w-full md:w-72 h-48 object-cover"
-            />
+            <div className="relative md:w-80 w-full h-56 md:h-auto flex-shrink-0 overflow-hidden">
+              <img
+                src={imageurl}
+                alt={title}
+                className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+              />
+            </div>
           )}
-  
-          <div className="flex flex-col flex-grow p-4 justify-between">
-            <h3 className="text-lg font-semibold mb-2">{title}</h3>
-  
-            {/* Centered actions */}
-            <div className="flex justify-center items-center space-x-6 my-2">
+
+          <div className="flex flex-col flex-grow p-6 justify-between">
+            <h3 className="text-2xl font-bold mb-2 text-gray-900">{title}</h3>
+            <p className="text-gray-600 mb-4 line-clamp-4">{alltext}</p>
+
+            {/* Centered actions with fancy hover */}
+            <div className="flex flex-wrap justify-center md:justify-end items-center gap-4 mb-4">
               <PostIcon type="like" countLink={links.likes} id={id} />
               <Displaycomment msgLink={links.msg} id={id} />
               <PostIcon type="heart" FavLink={links.fav} id={id} />
-            </div>
-  
-            {/* Details button as right arrow */}
-            <div className="flex justify-end mt-2">
               <Link
                 to={`/${id}`}
-                className="inline-flex items-center text-black hover:underline font-semibold"
+                className="inline-flex items-center px-4 py-2 bg-fire-bush-500 text-white rounded-lg font-semibold shadow hover:bg-fire-bush-600 transition-colors"
               >
-                Details <span className="ml-1 text-xl">→</span>
+                Read More <span className="ml-2 text-lg">→</span>
               </Link>
             </div>
           </div>
@@ -103,6 +98,6 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
       ))}
     </div>
   );
-  
-}
+};
+
 export default Article;

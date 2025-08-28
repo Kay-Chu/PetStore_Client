@@ -9,11 +9,10 @@ function FavPage() {
       <div>
         <Banner bannerTitle='My Favourite List' />
 
-        <div className="p-6 flex justify-center md:flex-row">
-          {/* Left side: Landing component */}
-          <div className="bg-white rounded-lg  p-4">
+        <div className="p-6 flex  md:flex-row">
+        
             <FavCard />
-          </div>
+        
         </div>
 
       </div>
