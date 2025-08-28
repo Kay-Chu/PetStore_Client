@@ -76,7 +76,7 @@ export default function App() {
     <Router>
       <Layout>
         <Navbar currentUser={currentUser} logOut={logOut} />
-        <Content>
+        <Content className="flex flex-col min-h-screen">
 
             <Routes>
 
@@ -92,7 +92,7 @@ export default function App() {
             </Routes>
 
         </Content>
-        <Footer className="bg-fire-bush-500 ">
+        <Footer className="bg-fire-bush-500 w-full py-4 text-center">
           <div >
             <Copyright />
             <img
