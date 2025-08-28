@@ -1,13 +1,10 @@
 import "antd/dist/reset.css";
-import { useState } from "react";
-import { Input, message, Typography } from "antd";
+import { useState, useEffect } from "react";
+import { Input, message, Typography, Table, Select } from "antd";
 import { api } from "./common/http-common";
-import { Table, Select, Col } from "antd";
 import axios from "axios";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React from "react";
-
-// import { Tag, Space } from 'antd';
 
 const { Column } = Table;
 const { Search } = Input;
@@ -18,90 +15,104 @@ interface SearchUserProps {
 }
 
 const SearchUser: React.FC<SearchUserProps> = ({ authbasic }) => {
-  let navigate: NavigateFunction = useNavigate();
-  const [press, setPress] = useState("");
+  const navigate = useNavigate();
+  const [press, setPress] = useState("all");
   const [usersData, setUsers] = useState([]);
   const [isSearchOK, setSearch] = useState(false);
 
-  const onSearch = async (value: any) => {
-    console.log("value ", value);
-    console.log("press ", `${press}`);
+  const fetchUsers = async (value: string = "") => {
+    if (press !== "all" && value.length < 3 && value !== "") {
+      message.warning(
+        "Please enter at least three characters to search by email or username"
+      );
+      return;
+    }
+
     let urlPath = `${api.uri}/users`;
-    if (press === "email" || press === "username")
-      urlPath += `/?fields=${press}&q=${value}`;
+    if (press === "email" || press === "username") urlPath += `/?fields=${press}&q=${value}`;
     else if (press === "username&fields=email" && value === "")
       urlPath += `/?fields=${press}`;
 
-    console.log("urlPath ", urlPath);
-
-    console.log("aToken ", localStorage.getItem("aToken"));
-    return await axios
-      .get(`${urlPath}`, {
-        method: "GET",
+    try {
+      const data = await axios.get(urlPath, {
         headers: { Authorization: `Basic ${localStorage.getItem("aToken")}` },
-      })
-      .then((data) => {
-        console.log("user return  ", JSON.stringify(data));
-        console.log("user data  ", data);
-        if (!data.data.length || data.data.length == 0) {
-          message.info("No data found");
-          navigate("/profile");
-          window.location.reload();
-        }
-        setUsers(data.data);
-        setSearch(true);
-        value = "";
-      })
-      .catch((err) => console.log("Error fetching users", err));
+      });
+
+      if (!data.data.length) {
+        message.info("No data found");
+        setUsers([]);
+        setSearch(false);
+        return;
+      }
+
+      setUsers(data.data);
+      setSearch(true);
+    } catch (err) {
+      console.log("Error fetching users", err);
+      message.error("Network error. Please try again.");
+    }
   };
 
-  const { Option } = Select;
-
-  function handleChange(value: any) {
-    message.info(
-      "Pls. enter at least three characters to search by email or username otherwise leave the input empty"
-    );
-
-    setPress(value);
-    console.log(`selected ${value}`);
-  }
+  // Fetch all users on mount
+  useEffect(() => {
+    fetchUsers();
+  }, [press]);
 
   return (
-    <>
-      <Col span={16}>
-        <Title level={3} style={{ color: "#0032b3" }}>
-          Blog Staff Admin
-        </Title>
-        <Title level={5}>Manage User Info</Title>
-        <Search
-          placeholder="Search Users"
-          allowClear
-          enterButton="Search"
-          size="large"
-          onSearch={onSearch}
-        />
-        <Select
-          defaultValue="all"
-          style={{ width: 280, marginRight: "200px" }}
-          onChange={handleChange}
-        >
-          <Option value="username">username</Option>
-          <Option value="email">email</Option>
-          <Option value="username&fields=email">
-            Get all-filter by username & email
-          </Option>
-          <Option value="all">Get all-without filter</Option>
-        </Select>
+    <div className="flex flex-col items-center py-10 ">
+      <div className="w-full max-w-5xl bg-white shadow-md rounded-xl p-8 space-y-6">
+        <div className="space-y-1">
+          <Title level={3} className="text-fire-bush-800">
+            User Accounts
+          </Title>
+          <Title level={5} className="text-gray-700">
+            Manage User Info
+          </Title>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
+          <Search
+            placeholder="Search Users"
+            allowClear
+            enterButton={
+              <button className="bg-fire-bush-500 text-white ml-2 rounded-md hover:bg-fire-bush-600 transition">
+                Search
+              </button>
+            }
+            size="large"
+            onSearch={fetchUsers}
+            className="flex-1"
+          />
+
+          <Select
+            defaultValue="all"
+            className="w-full md:w-72"
+            onChange={(value) => setPress(value)}
+          >
+            <Select.Option value="username">Username</Select.Option>
+            <Select.Option value="email">Email</Select.Option>
+            <Select.Option value="username&fields=email">
+              Get all-filter by username & email
+            </Select.Option>
+            <Select.Option value="all">Get all-without filter</Select.Option>
+          </Select>
+        </div>
+
         {isSearchOK && (
-          <Table dataSource={usersData}>
+          <Table
+            dataSource={usersData}
+            rowKey="id"
+            className="mt-6"
+            pagination={{ pageSize: 5 }}
+          >
             <Column title="ID" dataIndex="id" key="id" />
             <Column title="Username" dataIndex="username" key="username" />
-            <Column title="email" dataIndex="email" key="email" />
+            <Column title="Email" dataIndex="email" key="email" />
             <Column title="Role" dataIndex="role" key="role" />
           </Table>
         )}
-      </Col>
-    </>
+      </div>
+    </div>
   );
 };
 
