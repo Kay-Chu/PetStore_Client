@@ -100,7 +100,13 @@ Icon=DeleteFilled;
 
  return(
  <>
-  <Button icon={<MessageOutlined />} onClick={()=>{setIsShow(true)}} />
+  <Button
+  onClick={() => setIsShow(true)}
+  type="text"
+  className="!border-0"
+  icon={<span className="text-gray-700 hover:text-fire-bush-500"><MessageOutlined /></span>}
+/>
+
       <Modal open={isShow} onCancel={()=>{setIsShow(false)}} title="Comments Page " footer={[]}> 
   
   <List   

@@ -140,7 +140,7 @@ const PostIcon = (props: any) => {
 
   return (
     <span>
-      <Icon onClick={onclick} style={{ color: "steelblue" }} />
+      <Icon onClick={onclick}  />
       {props.type == "like" && count}
     </span>
   );
