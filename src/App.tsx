@@ -72,7 +72,7 @@ export default function App() {
   };
 
   return (
-    <div className="container">
+    <div>
     <Router>
       <Layout>
         <Navbar currentUser={currentUser} logOut={logOut} />
