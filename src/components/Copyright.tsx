@@ -6,7 +6,7 @@ const { Text } = Typography;
 const Copyright = () => {
     return (
         <>
-            <Text>(c) 2024 Web API Development of demonstration ONLY</Text>
+            <Text className='text-gray-900'>(c) Web API Project Demonstration ONLY</Text>
         </>
     )
 }

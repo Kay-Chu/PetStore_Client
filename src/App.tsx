@@ -92,11 +92,11 @@ export default function App() {
             </Routes>
 
         </Content>
-        <Footer style={{backgroundColor: "#c1c1c1", position:"relative", bottom: "0", width: "100%"}}>
-          <div className="container">
+        <Footer className="bg-fire-bush-500 ">
+          <div >
             <Copyright />
             <img
-              src="/src/assets/SHAPE_logo.png"
+              src="/src/assets/icon.png"
               alt="profile-img"
               className="profile-img-card"
               style={{ float: "right", height: "1.2rem" }}

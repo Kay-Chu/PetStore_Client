@@ -20,12 +20,12 @@ const Navbar = ({ currentUser, logOut }) => {
 
   return (
     <>
-      <header className="text-white p-4 flex justify-between items-center w-full px-12">
+      <header className=" p-4 flex justify-between items-center w-full px-12">
         {/* Left side navigation - Desktop */}
         <div className="flex items-center space-x-6">
           <Link to={"/"}>
             <img
-              src="/src/assets/small_Coventry_University.png"
+              src="/src/assets/icon.png"
               alt="profile-img"
               className="h-8 w-auto"
             />
