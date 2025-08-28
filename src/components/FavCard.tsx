@@ -1,171 +1,105 @@
 import 'antd/dist/reset.css';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, Col, Row, Spin } from 'antd';
-import { api } from './common/http-common';
+import { Link, useNavigate } from 'react-router-dom';
+import { Card, Col, Row, Spin, Tooltip } from 'antd';
+import { LoadingOutlined, CloseSquareOutlined, CloseSquareFilled } from '@ant-design/icons';
 import axios from 'axios';
-import {LoadingOutlined, CloseSquareOutlined,CloseSquareFilled} from '@ant-design/icons';
+import { api } from './common/http-common';
 import PostIcon from './posticon';
-import { NavigateFunction, useNavigate } from 'react-router-dom';
 import Displaycomment from './comments';
 
-
-
-const FavCard = (props:any) => {
-
-
-  const [articles, setArticles] = useState(null);
+const FavCard = () => {
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [theme, setTheme] = useState('outlined');
-  const navigate: NavigateFunction = useNavigate();
-  // let origin:any=localStorage.getItem('favorite')
-   
- 
- useEffect(()=>{
+  const [deletedArticleId, setDeletedArticleId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
-  axios.get(`${api.uri}/articles`)
-      .then(res => {
-        
-        if (Array.isArray(res.data)) { // Make sure the data is an array
-          
-          let config = {
-            method: 'get',
-            maxBodyLength: Infinity,
-            url: `${api.uri}/articles/fav`,
-            headers: { 
-              'Authorization': `Basic ${localStorage.getItem('aToken')}`
-            }
-          };
-          
-          axios.request(config)
-          .then((results) => {      
-           //console.log(`path ${api.uri}/articles/fav`) 
-           //console.log('results.data ', JSON.stringify(results.data))
-           //console.log('filterting....')
-            let filterArticle = filterPosts(results.data, res.data)
-        
-            setArticles(filterArticle )
-            
-          })    
-            .then(()=>{   
-            setLoading(false); })
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allArticlesRes = await axios.get(`${api.uri}/articles`);
+        if (!Array.isArray(allArticlesRes.data)) return;
 
+        const favRes = await axios.get(`${api.uri}/articles/fav`, {
+          headers: { Authorization: `Basic ${localStorage.getItem('aToken')}` },
+        });
 
-        } else {
-          console.error('Expected an array of articles, but received:', res.data);
+        const filteredArticles = favRes.data.map((fav: any) =>
+          allArticlesRes.data.find((art: any) => art.id === fav.articleid)
+        ).filter(Boolean);
 
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching articles:', error);
-
-      })
-  
- // console.log(`path ${api.uri}/articles/fav`)  
-  //console.log (`atoken ,Basic ${localStorage.getItem('aToken')}`)         
-
- },[])
-  
-  
-  // console.log('after filter article ',articles)
-  
-  function getIcon (theme:string) {
-    let Icon;
-  
-    if (theme === 'filled') 
-      Icon=CloseSquareFilled
-     else
-      Icon=CloseSquareOutlined
-    return Icon;
-  }
-
-
-
-  function filterPosts(filterarray:any[], originarray:any[]) 
-  { 
-    
-    
-    let resArr:any=[];
- 
-  console.log("filterarray  ",filterarray)
-  console.log("originarray  ",originarray)
-    for(let i=0; i<filterarray.length;i++)
-      for( let j=0; j<originarray.length;j++)
-        {
-          console.log("articleid,originarray", filterarray[i].articleid, originarray[j].id)
-         if(filterarray[i].articleid== originarray[j].id)
-          {resArr.push(originarray[j])
-          break
-          }  
-        }
-   return resArr 
+        setArticles(filteredArticles);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    
-  const handleDelete = (fav:any) => {
-  
-    setTheme('filled')
-// console.log('fav link arr ', fav.links.fav)
-// console.log('fav link ', fav)
-  axios.delete(fav.links.fav, {
-       
-        headers: {
-            "Authorization": `Basic ${localStorage.getItem('aToken')}`
-          }
-        }        
-    )
-      .then((results) =>{ console.log('respone ',JSON.stringify(results.data.message))
-        if(results.data.message==="removed")
-      {  
-          alert("This article is removed from your favorite list")
-          navigate("/favpage");
-          window.location.reload();}
-        
-      })
-      .catch((err) => {
-      console.log(`Check network problems pls. `);
-         alert("Check network problems");
-  })      
-}
+    };
+    fetchData();
+  }, []);
 
- 
-  if(loading){
-    const antIcon = <LoadingOutlined style={{ fontSize: 48}} spin />
-    return(<Spin indicator={antIcon} />);
-  } else {
-    if(!articles){
-      return(<div>There is no article available now.</div>)
-    } else {
-       
-     
-      const Icon = getIcon(theme)
-      return(<>
-      
-        <Row gutter={[16,16]}>
-          {
-            articles && articles.map(({id, title, alltext, imageurl, links})=> (
-            <Col  key={id}>                            
-             <Card title={title} style={{width: 300}}
-                   cover={<img alt="example" src={imageurl} />} hoverable
-                   actions={[
-                    <PostIcon type="like" countLink={links.likes} id={id}/>,
-                    <Displaycomment    msgLink={links.msg} id={id}/>,
-                    <PostIcon type="heart"  />,
-                    <Icon onClick={()=>handleDelete({links})}/>
-                  ]} 
-                   >         
-                  <Link to= {`/${id}`}>Details</Link>
-                 
-                </Card>
-                
-              </Col>
-            ))
-          }
-        </Row></>
-      )
+  const handleDelete = async (article: any) => {
+    setDeletedArticleId(article.id);
+    try {
+      const res = await axios.delete(article.links.fav, {
+        headers: { Authorization: `Basic ${localStorage.getItem('aToken')}` },
+      });
+      if (res.data.message === 'removed') {
+        setArticles(prev => prev.filter(a => a.id !== article.id));
+      }
+    } catch (err) {
+      alert('Network error, please try again.');
+    } finally {
+      setDeletedArticleId(null);
     }
+  };
+
+  if (loading) {
+    return <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} className="flex justify-center mt-20" />;
   }
 
-}
+  if (!articles.length) {
+    return <div className="text-center text-gray-500 mt-10">No favorite articles found.</div>;
+  }
 
+  return (
+    <Row gutter={[24, 24]} className="px-4 md:px-8">
+      {articles.map(({ id, title, alltext, imageurl, links }) => (
+        <Col key={id} xs={24} sm={12} md={8} lg={6}>
+          <Card
+            hoverable
+            className="rounded-2xl shadow-lg transition-transform transform hover:-translate-y-2 hover:shadow-2xl overflow-hidden"
+            cover={
+              <div className="relative w-full h-48 overflow-hidden">
+                {imageurl && (
+                  <img
+                    src={imageurl}
+                    alt={title}
+                    className="w-full h-full object-cover object-center "
+                  />
+                )}
+              </div>
+            }
+            actions={[
+              <Displaycomment msgLink={links.msg} id={id} />,
+              <Tooltip title="Remove from favorites" key="delete">
+                {deletedArticleId === id ? (
+                  <Spin size="small" />
+                ) : (
+                  <CloseSquareOutlined onClick={() => handleDelete({ id, links })} />
+                )}
+              </Tooltip>,
+            ]}
+          >
+            <Link to={`/${id}`} className="text-lg font-semibold text-gray-800 hover:text-fire-bush-500">
+              {title}
+            </Link>
+            <p className="text-gray-500 mt-2 line-clamp-3">{alltext}</p>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
+};
 
 export default FavCard;

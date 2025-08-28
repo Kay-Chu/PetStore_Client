@@ -1,26 +1,14 @@
 import React from "react";
-import bannerImg from "../assets/homepage/banner.png";
 import contentBG from "../assets/about/contentBG_1.png";
 import storyImg from "../assets/about/storyImg_2.jpg";
 import employeeImg from "../assets/about/employee3.jpg";
 import { DecorationCircle } from "../components/DecorationCircle";
+import { Banner } from "../components/Banner";
 
 const About = () => {
   return (
     <div className="w-full min-h-screen">
-      {/* Hero Banner */}
-      <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden">
-        <img
-          src={bannerImg}
-          alt="About Banner"
-          className="w-full h-full object-cover object-right-top"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-          <h1 className="text-white text-3xl md:text-5xl font-bold">
-            About Us
-          </h1>
-        </div>
-      </div>
+      <Banner bannerTitle='About Us' />
 
       {/* Main Content Section */}
       <div

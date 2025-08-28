@@ -1,26 +1,15 @@
-//import React from 'react';
+
 import React from "react";
 import Landing from "../components/Landing";
-import bannerImg from "../assets/homepage/banner.png";
+import { Banner } from "../components/Banner";
+
 
 const Dashboard = () => {
   return (
     <>
       <div>
-        {/* Banner */}
-        <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden">
-          <img
-            src={bannerImg}
-            alt="Pet Shelter Banner"
-            className="w-full h-full object-cover object-right-top"
-          />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <h1 className="text-white text-3xl md:text-5xl font-bold">
-              Dashboard
-            </h1>
-          </div>
-        </div>
 
+        <Banner bannerTitle="Dashboard" />
         <div className="p-6 max-w-7xl mx-auto flex flex-col md:flex-row gap-6">
           {/* Left side: Landing component */}
           <div className="md:w-2/3 bg-white rounded-lg shadow p-4">
