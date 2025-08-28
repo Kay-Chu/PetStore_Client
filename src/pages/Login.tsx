@@ -20,7 +20,7 @@ const Login: React.FC = () => {
       if (localStorage.getItem("user")) navigate("/profile");
       window.location.reload();
     } catch (err: any) {
-      alert(
+      message.info(
         `Sorry ${username}, you may not have an account in our system yet. Please try again or register first.`
       );
       console.log(err);

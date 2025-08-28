@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import {
   LikeOutlined,
@@ -8,6 +8,8 @@ import {
 } from "@ant-design/icons";
 import { getCurrentUser } from "../services/auth.service";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import Toast from "./Toast";
+import { message } from "antd";
 
 function getIcon(theme: any, iconType: any) {
   let Icon: any;
@@ -37,13 +39,15 @@ const PostIcon = (props: any) => {
   const Icon = getIcon(theme, iconType);
   const currentUser = getCurrentUser();
   const navigate: NavigateFunction = useNavigate();
+  const [toast, setToast] = useState<string | null>(null);
 
   const onclick = () => {
     //reverse the selected state with every click
     //  console.log('currentUser',  currentUser)
 
     if (!currentUser) {
-      alert("Pls. login to procceed this action");
+      message.info("Please login first!");
+      // setToast("Please login first!");
     } else if (props.type == "like") {
       setSelected(!selected);
       postLike();
@@ -69,17 +73,17 @@ const PostIcon = (props: any) => {
             responsejson.data.userid &&
             responsejson.data.message === "liked"
           ) {
-            // alert("Post liked");
+            // message.info("Post liked");
 
             window.location.reload();
           } else {
-            alert("you have post like already");
+            message.info("you have post like already");
             //  console.log('responsejson.data.message ',responsejson.data.message)
           }
         })
         .catch((err) => {
           console.log(`${props.type} Check network problems pls. ${props.id}`);
-          alert("Check network problems");
+          message.info("Check network problems");
         });
     }
   }
@@ -103,19 +107,19 @@ const PostIcon = (props: any) => {
             //localStorage.setItem('favorite',JSON.stringify(responsejson.data))  
 
             console.log("message " + responsejson.data.message);
-            alert("Fav added");
+            message.info("Fav added");
 
              navigate("/favpage");
              window.location.reload();
           } else {
-            alert("you have add this Fav already");
+            message.info("you have add this Fav already");
             // console.log("you have add this Fav already");
           };
         })
         .catch((err) => {
           console.log("err ", err);
           console.log(`${props.type} Check network problems pls. ${props.id}`);
-          alert("Check network problems");
+          message.info("Check network problems");
         });
     }
   }
@@ -139,10 +143,14 @@ const PostIcon = (props: any) => {
   });
 
   return (
+    <>
     <span>
       <Icon onClick={onclick}  />
       {props.type == "like" && count}
     </span>
+
+    </>
+    
   );
 };
 

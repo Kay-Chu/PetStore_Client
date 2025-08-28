@@ -1,5 +1,5 @@
 
-import { Button,  List, Tooltip, Space, Input, Modal, Flex } from  'antd';
+import { Button,  List, Tooltip, Space, Input, Modal, Flex, message } from  'antd';
 import { Comment } from '@ant-design/compatible';
 import { DeleteOutlined, DeleteFilled, MessageOutlined, } from '@ant-design/icons';
 import React, { useState } from 'react';
@@ -51,15 +51,15 @@ const addComment:any =  (event:any)  => {
           })                   
       .then(reponse =>{ if(reponse.data.message==="added")
       {
-       alert("comment added")
+       message.info("comment added")
       //  navigate("/");
        window.location.reload();
     }
-         else(alert("you have post comment already"))
+         else(message.info("you have post comment already"))
       })
       .catch(err => {
       console.log(`${props.msgLink} Check network problems pls. ${props.id}`);
-         alert("Check network problems");
+         message.info("Check network problems");
       })
       )}
                  
@@ -85,13 +85,13 @@ Icon=DeleteFilled;
         console.log('respone ',JSON.stringify(response.data.message))
         if(response.data.message==="removed")
       {     
-          alert("This article commentis removed by admin")
+          message.info("This article commentis removed by admin")
           navigate("/");
           window.location.reload();}       
       })
       .catch(err => {
       console.log(`${props.type} Check network problems pls. ${props.id}`);
-         alert("Check network problems");
+         message.info("Check network problems");
  })
     }
 

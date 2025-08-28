@@ -1,85 +1,90 @@
-import 'antd/dist/reset.css';
-import React from 'react';
-import EditForm from './EditForm';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button,Spin, Col, Card } from 'antd';
-import { api } from './common/http-common';
-import axios from 'axios';
-import { RollbackOutlined,LoadingOutlined,CloseSquareOutlined,CloseSquareFilled,EditOutlined,EditFilled } from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { api } from "./common/http-common";
 import { getCurrentUser } from "../services/auth.service";
+import EditForm from "./EditForm";
 
+const DetailArticle: React.FC = () => {
+  const currentUser = getCurrentUser();
+  const { aid } = useParams();
+  const navigate = useNavigate();
+  const [article, setArticle] = useState({
+    id: 0,
+    title: "",
+    alltext: "",
+    summary: "",
+    imageurl: "",
+    authorid: 0,
+    description: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [deleted, setDeleted] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
-
-const DetailArticle = () => {
-const currentUser = getCurrentUser();
-const { aid } = useParams();
-const [article, setArticle] = React.useState({id:0, title:'', alltext:'', summary:'',imageurl:'', authorid:0, description:""}); 
-const navigate= useNavigate();
-const [loading, setLoading] = React.useState(true);
-const [theme, setTheme] = React.useState('outlined');
-
-React.useEffect(() => {
-  console.log(`path: ${api.uri}/articles/${aid}`)
-    axios.get(`${api.uri}/articles/${aid}`)
+  useEffect(() => {
+    console.log(  currentUser)
+    axios
+      .get(`${api.uri}/articles/${aid}`)
       .then((res) => {
-      //  console.log('article' ,article)
         setArticle(res.data);
-        localStorage.setItem('e',JSON.stringify(res.data))  
-        setLoading(false);
-      }).then(()=>{
-        setLoading(false);
-      })  
-      .catch((error) => {
-        console.log('Error fetching article details ')
-       // console.error('Error fetching article details:', error);
-      });
-  }, [aid]);
-  
-  function getIcon (theme:string) {
-    let Icon;
-  
-    if (theme === 'filled') 
-        Icon=CloseSquareFilled      
-    else 
-        Icon=CloseSquareOutlined 
-    return Icon;
-  }
-  
-  
-  const handleDelete = () => {
-  
-    setTheme('filled')
-// console.log('fav link arr ', fav.links.fav)
-// console.log('fav link ', fav)
-  axios.delete(`${api.uri}/articles/${aid}`, {
-       
-        headers: {
-            "Authorization": `Basic ${localStorage.getItem('aToken')}`
-          }
-        }        
-    )
-      .then((results) =>{ console.log('respone ',JSON.stringify(results.data.message))
-        if(results.data.message==="removed")
-      {  
-          alert("This article is removed from the blog list")
-          navigate("/");
-          window.location.reload();}
-        
+        localStorage.setItem("e", JSON.stringify(res.data));
       })
       .catch((err) => {
-      console.log(`Check network problems pls. `);
-         alert("Check network problems");
-  })      
-}
+        console.log("Error fetching article details", err);
+      })
+      .finally(() => setLoading(false));
+  }, [aid]);
 
-       
-if(loading){
-const antIcon = <LoadingOutlined style={{ fontSize: 48}} spin />
-return(<Spin indicator={antIcon} />);
-}
-else {
+  const handleDelete = () => {
+    setDeleted(true);
+    axios
+      .delete(`${api.uri}/articles/${aid}`, {
+        headers: {
+          Authorization: `Basic ${localStorage.getItem("aToken")}`,
+        },
+      })
+      .then((res) => {
+        if (res.data.message === "removed") {
+          alert("This article is removed from the blog list");
+          navigate("/");
+          window.location.reload();
+        }
+      })
+      .catch((err) => {
+        console.log("Check network problems pls.");
+        alert("Check network problems");
+        setDeleted(false);
+      });
+  };
 
-  const Icon = getIcon(theme)
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <svg
+          className="animate-spin h-12 w-12 text-orange-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          ></path>
+        </svg>
+      </div>
+    );
+  }
+
   return (
     <>
       <h2 style={{ color: 'red' }}> Welcome to Blog Dashboard</h2>   
@@ -110,8 +115,51 @@ else {
       
     </>
   );
+            </div>
 
  }
 }
+              <p className="text-gray-600 mt-1">{article.description}</p>
+              </svg>
+              Back
+            </button>
+
+            {currentUser&&currentUser.role==="admin" && (
+      <div className="flex space-x-3 items-center">
+        {/* Always render EditForm */}
+        <EditForm isNew={false} aid={aid} />
+
+        {/* Delete button */}
+        <button
+          onClick={handleDelete}
+          disabled={deleted}
+          className="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition disabled:opacity-50"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M8.257 3.099c.366-.446.958-.482 1.329 0l7.418 9.184c.36.447.074 1.117-.466 1.117H1.305c-.54 0-.826-.67-.466-1.117l7.418-9.184z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Delete
+        </button>
+      </div>
+    )}
+          </div>
+        </div>
+      </div>
+
+       
+     
+  
+    </div>
+  );
+};
 
 export default DetailArticle;

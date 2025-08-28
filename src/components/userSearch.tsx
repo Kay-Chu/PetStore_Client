@@ -44,7 +44,7 @@ const SearchUser: React.FC<SearchUserProps> = ({ authbasic }) => {
         console.log("user return  ", JSON.stringify(data));
         console.log("user data  ", data);
         if (!data.data.length || data.data.length == 0) {
-          alert("No data found");
+          message.info("No data found");
           navigate("/profile");
           window.location.reload();
         }

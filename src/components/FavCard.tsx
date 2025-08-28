@@ -48,7 +48,7 @@ const FavCard = () => {
         setArticles(prev => prev.filter(a => a.id !== article.id));
       }
     } catch (err) {
-      alert('Network error, please try again.');
+      message.info('Network error, please try again.');
     } finally {
       setDeletedArticleId(null);
     }

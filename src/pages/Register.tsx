@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../services/auth.service";
+import { message } from "antd";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -13,17 +14,17 @@ const Register: React.FC = () => {
 
   const handleRegister = async () => {
     if (password !== confirm) {
-      alert("Passwords do not match!");
+      message.info("Passwords do not match!");
       return;
     }
     setLoading(true);
     try {
       await register(username, email, password, actiCode);
-      alert(`Welcome ${username}! Please login to access your profile.`);
+      message.info(`Welcome ${username}! Please login to access your profile.`);
       navigate("/");
       window.location.reload();
     } catch (error: any) {
-      alert(
+      message.info(
         `Sorry, the username "${username}" already exists! Please try another username.`
       );
       console.log(error);
