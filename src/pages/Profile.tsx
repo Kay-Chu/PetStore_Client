@@ -6,6 +6,7 @@ import { Row, Col, Space, Avatar, Table } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import EditForm from "../components/EditForm";
 import { useNavigate } from "react-router-dom";
+import { Banner } from "../components/Banner";
 
 const Profile = () => {
   const currentUser = getCurrentUser();
@@ -21,7 +22,7 @@ const Profile = () => {
     { key: '2', label: 'Username', value: currentUser.username },
     { key: '3', label: 'Email', value: currentUser.email },
     { key: '4', label: 'About me', value: currentUser.about },
-    { key: '5', label: 'Avatar', value: <Avatar style={{ backgroundColor: "#87d068" }} icon={<UserOutlined />} /> },
+    { key: '5', label: 'Avatar', value: <Avatar className="bg-fire-bush-500" icon={<UserOutlined />} /> },
     { key: '6', label: 'Role', value: currentUser.role },
     { key: '7', label: 'Login token', value: localStorage.getItem("aToken")?.substring(0, 20) },
   ];
@@ -32,9 +33,11 @@ const Profile = () => {
   ];
 
   return (
-    <div className="profile-container" style={{ padding: 20 }}>
-      <h2 style={{ color: "#135200" }}><strong>Profile</strong></h2>
-      <h3>Current User: {currentUser.username}</h3>
+    <>
+    <Banner bannerTitle="Profile"/>
+    <div className="profile-container mt-6 px-32" >
+     
+      {/* <h3>Current User: {currentUser.username}</h3> */}
       <Table dataSource={dataSource} columns={columns} pagination={false} showHeader={false} bordered />
       
       <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
@@ -50,6 +53,7 @@ const Profile = () => {
         )}
       </Row>
     </div>
+    </>
   );
 };
 
