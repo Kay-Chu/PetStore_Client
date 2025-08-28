@@ -65,7 +65,7 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
   }
 
   return (
-    <div className="px-4 py-6 max-w-7xl mx-auto space-y-6">
+    <div className="py-6 max-w-7xl mx-auto space-y-6">
       {articles.map(({ id, title, imageurl, links }) => (
         <div
           key={id}
@@ -75,7 +75,7 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
             <img
               src={imageurl}
               alt={title}
-              className="w-full md:w-1/3 h-48 object-cover"
+              className="w-full md:w-72 h-48 object-cover"
             />
           )}
   
@@ -93,7 +93,7 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
             <div className="flex justify-end mt-2">
               <Link
                 to={`/${id}`}
-                className="inline-flex items-center text-blue-600 hover:underline font-semibold"
+                className="inline-flex items-center text-black hover:underline font-semibold"
               >
                 Details <span className="ml-1 text-xl">→</span>
               </Link>

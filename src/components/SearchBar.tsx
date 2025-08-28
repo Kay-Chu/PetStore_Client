@@ -7,7 +7,7 @@ const { Option } = Select;
 
 const SearchBar = ({ searchInput, setSearchInput, setFilter, filter }) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ display: 'flex', justifyContent: 'right', alignItems: 'center' }}>
       <Input
         placeholder="Search Articles"
         value={searchInput}

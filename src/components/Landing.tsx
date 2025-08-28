@@ -6,7 +6,7 @@ import React from 'react';
 
 const Landing = () => {
 
-  const articles = [1, 2, 3]; 
+  const articles = [1, 2, 3, 4]; 
 
   return (
     <div className='center_content'>
