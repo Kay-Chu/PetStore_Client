@@ -4,6 +4,7 @@ import axios from "axios";
 import { api } from "./common/http-common";
 import { getCurrentUser } from "../services/auth.service";
 import EditForm from "./EditForm";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const DetailArticle: React.FC = () => {
   const currentUser = getCurrentUser();
@@ -23,7 +24,7 @@ const DetailArticle: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
-    console.log(  currentUser)
+    console.log(currentUser)
     axios
       .get(`${api.uri}/articles/${aid}`)
       .then((res) => {
@@ -86,78 +87,83 @@ const DetailArticle: React.FC = () => {
   }
 
   return (
-    <>
-      <h2 style={{ color: 'red' }}> Welcome to Blog Dashboard</h2>   
-      
-            <Col  span={24} >                                   
-             <Card title={article.title} style={{width: 300,marginLeft:"100px"}}
-                   cover={<img alt="put image here" src={article.imageurl} />} hoverable
-                  
-                   actions={[
-                    (currentUser&&currentUser.role==="admin"&&currentUser.id===article.authorid)&&<EditForm  isNew={false} aid={aid}/>,  
-                    (currentUser&&currentUser.role==="admin"&&currentUser.id===article.authorid)&& <Icon  style={{ fontSize: '32px', }} onClick={()=>handleDelete()}/>
-                  ]} 
-                   >               
-                  <div> <h3>About me</h3>
-                   <p>{article.alltext}</p>
-                   <h3>Summary</h3>
-                   <p>{article.summary}</p>
-                   <h3>Detail Description</h3>
-                   <p> {article.description}</p>
-                   <Button  
-        type="primary"
-        icon={<RollbackOutlined />}
-        onClick={() => navigate(-1)} 
-      /></div> 
-                 
-                </Card>
-               </Col>
-      
-    </>
-  );
+    <div className="flex justify-center py-10 px-4 bg-gray-50 min-h-screen">
+      <div className="bg-white rounded-xl shadow-lg max-w-3xl w-full overflow-hidden">
+        {article.imageurl && (
+          <img
+            src={article.imageurl}
+            alt={article.title}
+            className="w-full h-64 object-cover"
+          />
+        )}
+
+        <div className="p-6">
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">{article.title}</h1>
+
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">About me</h2>
+              <p className="text-gray-600 mt-1">{article.alltext}</p>
             </div>
 
- }
-}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Summary</h2>
+              <p className="text-gray-600 mt-1">{article.summary}</p>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold text-gray-700">Detail Description</h2>
               <p className="text-gray-600 mt-1">{article.description}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between mt-6">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center px-4 py-2 bg-fire-bush-500 text-white rounded-md hover:bg-orange-600 transition"
+            >
+              {/* Rollback icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 10h11M3 10l4-4m-4 4l4 4M21 14v7H3v-7"
+                />
               </svg>
               Back
             </button>
 
-            {currentUser&&currentUser.role==="admin" && (
-      <div className="flex space-x-3 items-center">
-        {/* Always render EditForm */}
-        <EditForm isNew={false} aid={aid} />
+            {currentUser && currentUser.role === "admin" && (
+              <div className="flex space-x-3 items-center">
+                {/* Delete button */}
+                <button
+                  onClick={handleDelete}
+                  disabled={deleted}
+                  className="flex items-center px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-red-600 transition disabled:opacity-50"
+                >
+                  <DeleteOutlined className="mr-2" />
+                  Delete
+                </button>
 
-        {/* Delete button */}
-        <button
-          onClick={handleDelete}
-          disabled={deleted}
-          className="flex items-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition disabled:opacity-50"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8.257 3.099c.366-.446.958-.482 1.329 0l7.418 9.184c.36.447.074 1.117-.466 1.117H1.305c-.54 0-.826-.67-.466-1.117l7.418-9.184z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Delete
-        </button>
-      </div>
-    )}
+                <EditForm isNew={false} aid={aid} />
+
+
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-       
-     
-  
+
+
+
     </div>
   );
 };
