@@ -65,39 +65,44 @@ const Article: React.FC<ArticlesProps> = ({ searchInput, filter }) => {
   }
 
   return (
-    <div className="px-4 py-6 max-w-7xl mx-auto">
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {articles.map(({ id, title, imageurl, links }) => (
-          <div
-            key={id}
-            className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 flex flex-col"
-          >
-            {imageurl && (
-              <img
-                src={imageurl}
-                alt={title}
-                className="w-full h-48 object-cover rounded-t-lg"
-              />
-            )}
-            <div className="p-4 flex flex-col flex-grow">
-              <h3 className="text-lg font-semibold mb-2">{title}</h3>
-              <div className="mt-auto flex items-center justify-between space-x-2">
-                <PostIcon type="like" countLink={links.likes} id={id} />
-                <Displaycomment msgLink={links.msg} id={id} />
-                <PostIcon type="heart" FavLink={links.fav} id={id} />
-              </div>
+    <div className="px-4 py-6 max-w-7xl mx-auto space-y-6">
+      {articles.map(({ id, title, imageurl, links }) => (
+        <div
+          key={id}
+          className="flex flex-col md:flex-row bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-200 overflow-hidden"
+        >
+          {imageurl && (
+            <img
+              src={imageurl}
+              alt={title}
+              className="w-full md:w-1/3 h-48 object-cover"
+            />
+          )}
+  
+          <div className="flex flex-col flex-grow p-4 justify-between">
+            <h3 className="text-lg font-semibold mb-2">{title}</h3>
+  
+            {/* Centered actions */}
+            <div className="flex justify-center items-center space-x-6 my-2">
+              <PostIcon type="like" countLink={links.likes} id={id} />
+              <Displaycomment msgLink={links.msg} id={id} />
+              <PostIcon type="heart" FavLink={links.fav} id={id} />
+            </div>
+  
+            {/* Details button as right arrow */}
+            <div className="flex justify-end mt-2">
               <Link
                 to={`/${id}`}
-                className="mt-3 inline-block text-blue-600 hover:underline"
+                className="inline-flex items-center text-blue-600 hover:underline font-semibold"
               >
-                Details
+                Details <span className="ml-1 text-xl">→</span>
               </Link>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
-};
-
+  
+}
 export default Article;

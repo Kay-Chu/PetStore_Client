@@ -20,7 +20,7 @@ const Navbar = ({ currentUser, logOut }) => {
 
   return (
     <>
-      <header className="bg-gray-800 text-white p-4 flex justify-between items-center w-full px-12">
+      <header className="text-white p-4 flex justify-between items-center w-full px-12">
         {/* Left side navigation - Desktop */}
         <div className="flex items-center space-x-6">
           <Link to={"/"}>
@@ -32,13 +32,13 @@ const Navbar = ({ currentUser, logOut }) => {
           </Link>
           
           <div className="hidden md:flex space-x-6">
-            <Link to="/" className="flex items-center hover:text-blue-300">
+            <Link to="/" className="flex items-center text-black hover:text-fire-bush-300">
               <HomeOutlined className="mr-1" /> Home
             </Link>
-            <Link to="/dashboard" className="flex items-center hover:text-blue-300">
+            <Link to="/dashboard" className="flex items-center text-black hover:text-fire-bush-300">
               <DashboardOutlined className="mr-1" /> Dashboard
             </Link>
-            <Link to="/about" className="flex items-center hover:text-blue-300">
+            <Link to="/about" className="flex items-center text-black hover:text-fire-bush-300">
               <InfoCircleOutlined className="mr-1" /> About
             </Link>
           </div>
@@ -48,21 +48,21 @@ const Navbar = ({ currentUser, logOut }) => {
         <div className="hidden md:flex items-center space-x-6">
           {currentUser ? (
             <>
-              <Link to="/profile" className="flex items-center hover:text-blue-300">
+              <Link to="/profile" className="flex items-center text-black hover:text-fire-bush-300">
                 <UserOutlined className="mr-1" />
                 {currentUser.username}
               </Link>
-              <Link to="/favpage" className="flex items-center hover:text-blue-300">
+              <Link to="/favpage" className="flex items-center text-black hover:text-fire-bush-300">
                 <HeartFilled className="mr-1" /> Favorites
               </Link>
-              <Link to="/" onClick={logOut} className="flex items-center hover:text-blue-300">
+              <Link to="/" onClick={logOut} className="flex items-center text-black hover:text-fire-bush-300">
                 <LogoutOutlined className="mr-1" /> Logout
               </Link>
             </>
           ) : (
             <>
               <Login />
-              <Link to="/register" className="hover:text-blue-300">Register</Link>
+              <Link to="/register" className="text-black hover:text-fire-bush-300">Register</Link>
             </>
           )}
         </div>
@@ -86,27 +86,27 @@ const Navbar = ({ currentUser, logOut }) => {
           open={visible}
         >
           <div className="flex flex-col space-y-4">
-            <Link to="/" onClick={toggleDrawer} className="flex items-center text-gray-800 hover:text-blue-500">
+            <Link to="/" onClick={toggleDrawer} className="flex items-center text-gray-800 text-black hover:text-fire-bush-500">
               <HomeOutlined className="mr-2" /> Home
             </Link>
-            <Link to="/dashboard" onClick={toggleDrawer} className="flex items-center text-gray-800 hover:text-blue-500">
+            <Link to="/dashboard" onClick={toggleDrawer} className="flex items-center text-gray-800 text-black hover:text-fire-bush-500">
               <DashboardOutlined className="mr-2" /> Dashboard
             </Link>
-            <Link to="/about" onClick={toggleDrawer} className="flex items-center text-gray-800 hover:text-blue-500">
+            <Link to="/about" onClick={toggleDrawer} className="flex items-center text-gray-800 text-black hover:text-fire-bush-500">
               <InfoCircleOutlined className="mr-2" /> About
             </Link>
             
             {currentUser ? (
               <>
-                <Link to="/profile" onClick={toggleDrawer} className="flex items-center text-gray-800 hover:text-blue-500">
+                <Link to="/profile" onClick={toggleDrawer} className="flex items-center text-gray-800 text-black hover:text-fire-bush-500">
                   <UserOutlined className="mr-2" />
                   {currentUser.username}
                 </Link>
-                <Link to="/favpage" onClick={toggleDrawer} className="flex items-center text-gray-800 hover:text-blue-500">
+                <Link to="/favpage" onClick={toggleDrawer} className="flex items-center text-gray-800 text-black hover:text-fire-bush-500">
                   <HeartFilled className="mr-2" /> Favorites
                 </Link>
                 <div
-                  className="flex items-center text-gray-800 hover:text-blue-500 cursor-pointer"
+                  className="flex items-center text-gray-800 text-black hover:text-fire-bush-500 cursor-pointer"
                   onClick={() => {
                     logOut();
                     toggleDrawer();
@@ -120,7 +120,7 @@ const Navbar = ({ currentUser, logOut }) => {
                 <div onClick={toggleDrawer}>
                   <Login />
                 </div>
-                <Link to="/register" onClick={toggleDrawer} className="text-gray-800 hover:text-blue-500">
+                <Link to="/register" onClick={toggleDrawer} className="text-gray-800 text-black hover:text-fire-bush-500">
                   Register
                 </Link>
               </>
