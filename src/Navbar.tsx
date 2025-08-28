@@ -62,7 +62,7 @@ const Navbar = ({ currentUser, logOut }) => {
           ) : (
             <>
               <Login />
-              <Link to="/register" className="text-black hover:text-fire-bush-300">Register</Link>
+              {/* <Link to="/register" className="text-black hover:text-fire-bush-300">Register</Link> */}
             </>
           )}
         </div>
@@ -120,9 +120,9 @@ const Navbar = ({ currentUser, logOut }) => {
                 <div onClick={toggleDrawer}>
                   <Login />
                 </div>
-                <Link to="/register" onClick={toggleDrawer} className="text-gray-800 text-black hover:text-fire-bush-500">
+                {/* <Link to="/register" onClick={toggleDrawer} className="border-1 text-gray-800 text-black hover:text-fire-bush-500">
                   Register
-                </Link>
+                </Link> */}
               </>
             )}
           </div>

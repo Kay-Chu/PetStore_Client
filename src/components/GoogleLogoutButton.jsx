@@ -36,6 +36,7 @@ const GoogleLogoutButton = ({ onSuccess, onFailure }) => {
       type="primary" 
       danger
       size="large"
+      className='m-2'
     >
       Sign Out
     </Button>

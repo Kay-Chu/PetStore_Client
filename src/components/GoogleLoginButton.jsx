@@ -26,12 +26,7 @@ const GoogleLoginButton = ({ onSuccess, onFailure }) => {
       onClick={() => login()} 
       icon={<GoogleOutlined />} 
       size="large"
-      style={{ 
-        width: '100%', 
-        backgroundColor: '#4285F4', 
-        color: 'white',
-        border: 'none'
-      }}
+      className=' m-2'
     >
       Continue with Google
     </Button>

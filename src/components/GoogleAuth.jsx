@@ -23,8 +23,8 @@ const GoogleAuth = () => {
 //var accessToken = gapi.auth.getToken().access_token;
 
   return (
-    <div>
-       <GoogleOAuthProvider clientId={clientId}>
+    <div >
+       <GoogleOAuthProvider clientId={clientId} className='w-full'>
         <GoogleLoginButton />
         <GoogleLogoutButton />
         </GoogleOAuthProvider>

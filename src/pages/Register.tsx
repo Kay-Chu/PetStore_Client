@@ -1,143 +1,123 @@
-import "antd/dist/reset.css";
 import React, { useState } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import UserT from "../types/user.type";
-import { Form, Input, Button } from "antd";
+import { useNavigate } from "react-router-dom";
 import { register } from "../services/auth.service";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 const Register: React.FC = () => {
-  let navigate: NavigateFunction = useNavigate();
-  const initialValues: UserT = {
-    username: "",
-    email: "",
-    password: "",
-    role: "user",
-    actiCode: "",
-  };
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [actiCode, setActiCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = (values: UserT) => {
-    const { username, email, password, actiCode } = values;
-
-    register(username, email, password, actiCode)
-      .then((response) => {
-        window.alert(`Welcome ${username}! Pls login to access your account profile`)
-
-        console.log(response.data);
-        navigate("/");
-        window.location.reload();
-      })
-      .catch((error) => {
-        window.alert(
-          `Sorry, the username "${username}" has already exists! Pls try again with another username.`
-        );
-        navigate("/register");
-        window.location.reload();
-        console.log(error);
-      });
+  const handleRegister = async () => {
+    if (password !== confirm) {
+      alert("Passwords do not match!");
+      return;
+    }
+    setLoading(true);
+    try {
+      await register(username, email, password, actiCode);
+      alert(`Welcome ${username}! Please login to access your profile.`);
+      navigate("/");
+      window.location.reload();
+    } catch (error: any) {
+      alert(
+        `Sorry, the username "${username}" already exists! Please try another username.`
+      );
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-    <div className="container">
-      <div className="center_content">
-      <h3>
-        {" "}
-        <strong>Welcome to Blog Registration</strong>
-      </h3>
-      <Form
-        style={{ margin: "5px", width: "900px" }}
-        layout="vertical"
-        name="normal_register"
-        className="register-form"
-        initialValues={initialValues}
-        onFinish={handleRegister}
-      >
-        <Form.Item
-          name="username"
-          label="Username"
-          rules={[
-            {
-              required: true,
-              message: "Please input your Username!",
-            },
-          ]}
-        >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Username"
-          />
-        </Form.Item>
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[
-            { type: "email", message: "The input is not valid E-mail!" },
-            { required: true, message: "Please input your E-mail!" },
-          ]}
-        >
-          <Input placeholder="emails" />
-        </Form.Item>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+      <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Welcome to Registration
+        </h2>
 
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password placeholder="Password" />
-        </Form.Item>
+        <div className="space-y-4">
+          {/* Username */}
+          <div>
+            <p className="text-left  text-gray-700 mb-1">Username</p>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
 
-        <Form.Item
-          name="confirm"
-          label="Confirm Password"
-          dependencies={["password"]}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: "Please confirm your password!",
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error("The new password that you entered do not match!")
-                );
-              },
-            }),
-          ]}
-        >
-          <Input.Password placeholder="Confirm Password" />
-        </Form.Item>
-        <Form.Item name="actiCode" label="Activation Code">
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="secret code for internal staff(optional)"
-          />
-        </Form.Item>
+          {/* Email */}
+          <div>
+            <p className="text-left  text-gray-700 mb-1">Email</p>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
+          {/* Password */}
+          <div>
+            <p className="text-left  text-gray-700 mb-1">Password</p>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <p className="text-left  text-gray-700 mb-1">Confirm Password</p>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          {/* Activation Code */}
+          <div>
+            <p className="text-left  text-gray-700 mb-1">Activation Code (optional)</p>
+            <input
+              type="text"
+              placeholder="Secret code for internal staff"
+              value={actiCode}
+              onChange={(e) => setActiCode(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          {/* Register Button */}
+          <button
+            onClick={handleRegister}
+            disabled={loading}
+            className="w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition disabled:opacity-50"
           >
-            Register
-          </Button>
-        </Form.Item>
-      </Form>
+            {loading ? "Registering..." : "Register"}
+          </button>
+
+          {/* Login link */}
+          <p className="text-center text-gray-500">
+            Already have an account?{" "}
+            <a href="/" className="text-orange-500 hover:underline">
+              Login here
+            </a>
+          </p>
+        </div>
       </div>
     </div>
-    </>
   );
 };
 

@@ -1,133 +1,156 @@
-import "antd/dist/reset.css";
-import React, { useState, useEffect } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { Form, Input, Button, Checkbox, Modal, Divider } from "antd";
-import { LoginOutlined, UserOutlined, LockOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "../services/auth.service";
 import GoogleAuth from "../components/GoogleAuth";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 
 const Login: React.FC = () => {
-  let navigate: NavigateFunction = useNavigate();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-  const [isShow, setIsShow] = React.useState(false);
-  const onFinish = (values: any) => {
-    const { username, password } = values;
+  const navigate = useNavigate();
+  const [isShow, setIsShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
 
-    setMessage("");
+  const handleLogin = async () => {
     setLoading(true);
-
-    login(username, password)
-      .then(() => {
-        if (localStorage.getItem("user")) navigate("/profile");
-        window.location.reload();
-      })
-      .catch((error) => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        window.alert(
-          `Sorry ${username} you may not have account in our system yet! pls try again or register first`
-        );
-        console.log(error.toString());
-        setLoading(false);
-        setMessage(resMessage);
-        navigate("/");
-        window.location.reload();
-      });
+    try {
+      await login(username, password);
+      if (localStorage.getItem("user")) navigate("/profile");
+      window.location.reload();
+    } catch (err: any) {
+      alert(
+        `Sorry ${username}, you may not have an account in our system yet. Please try again or register first.`
+      );
+      console.log(err);
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      <Button
-        icon={<LoginOutlined />}
-        onClick={() => {
-          setIsShow(true);
-        }}
-      />
-
-      <Modal
-        open={isShow}
-        onCancel={() => {
-          setIsShow(false);
-        }}
-        title="Welcome Blogger"
-        footer={[]}
+      {/* Trigger button */}
+      <button
+        onClick={() => setIsShow(true)}
+        className="flex items-center px-4 py-2 bg-transparent border-0"
       >
-        <div className="container">
-          <div className="center_content">
-            <Form
-              name="normal_login"
-              layout="vertical"
-              className="login-form"
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFinish}
-              style={{ display: "block", width: "100%" }}
-            >
-              <Form.Item
-                name="username"
-                label="Username"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Username!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder="Username"
-                />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Password!",
-                  },
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Item>
-              <Form.Item>
-                <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
+        <Avatar className="bg-fire-bush-500 hover:bg-fire-bush-400" icon={<UserOutlined />} />
+      </button>
 
-                <a className="login-form-forgot" href="">
-                  Forgot password
+      {/* Modal */}
+      {isShow && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-8 relative">
+            {/* Close button */}
+            <button
+              onClick={() => setIsShow(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              Log in Pet Shelter
+            </h2>
+
+            <div className="space-y-4">
+              {/* Username */}
+              <div>
+                <p className="text-left text-gray-700 mb-1">Username</p>
+                <div className="flex items-center border rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-orange-500">
+                  {/* User icon using SVG */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm0 2c-4 0-6 2-6 4v2h12v-2c0-2-2-4-6-4z" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <p className="text-left text-gray-700 mb-1">Password</p>
+                <div className="flex items-center border rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-orange-500">
+                  {/* Lock icon using SVG */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2v2h6V6a3 3 0 00-6 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Remember & forgot */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="h-4 w-4 text-orange-500 focus:ring-orange-400 border-gray-300 rounded"
+                  />
+                  <span className="text-gray-700">Remember me</span>
+                </label>
+                <a href="#" className="text-orange-500 hover:underline">
+                  Forgot password?
                 </a>
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                  style={{ width: "100%" }}
-                >
-                  Log in
-                </Button>
-              </Form.Item>
-              Do not have an account? <a href="/register">Register now!</a>
-              <Divider />
-              <Form.Item  style={{ width: "100%" }}>
-                <GoogleAuth />
-              </Form.Item>
-            </Form>
+              </div>
+
+              {/* Login button */}
+              <button
+                onClick={handleLogin}
+                disabled={loading}
+                className="w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition disabled:opacity-50"
+              >
+                {loading ? "Logging in..." : "Log in"}
+              </button>
+
+              {/* Register link */}
+              <p className="text-center text-gray-500">
+                Don’t have an account?{" "}
+                <a href="/register" className="text-orange-500 hover:underline">
+                  Register now!
+                </a>
+              </p>
+
+              {/* Divider */}
+              <div className="flex items-center my-2">
+                <hr className="flex-grow border-gray-300" />
+                <span className="mx-2 text-gray-400">or</span>
+                <hr className="flex-grow border-gray-300" />
+              </div>
+
+              {/* Google Auth */}
+              <GoogleAuth />
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
     </>
   );
 };
