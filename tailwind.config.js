@@ -6,6 +6,9 @@ export default {
     ],
     theme: {
       extend: {
+        fontFamily: {
+          sans: ['DM Sans', 'sans-serif'],
+        },
         colors: {
           'fire-bush': {
             '50': '#fef8ec',
