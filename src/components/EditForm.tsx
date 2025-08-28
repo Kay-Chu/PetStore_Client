@@ -1,180 +1,184 @@
-import "antd/dist/reset.css";
 import React, { useState } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { Form, Input, Button, Modal, Typography, Select } from "antd";
-import { EditOutlined, EditFilled } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api } from "./common/http-common";
 import { getCurrentUser } from "../services/auth.service";
-const { Title } = Typography;
-const { TextArea } = Input;
 
 interface EditFormProps {
   aid: any;
   isNew: boolean;
 }
 
-const EditForm: React.FC<EditFormProps> = (props) => {
-  let navigate: NavigateFunction = useNavigate();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
-  const [isShow, setIsShow] = React.useState(false);
+const EditForm: React.FC<EditFormProps> = ({ aid, isNew }) => {
+  const navigate = useNavigate();
+  const [isShow, setIsShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const aa: any = JSON.parse(localStorage.getItem("e") || "{}");
 
-  const contentRules = [{ required: true, message: "Please input somethings" }];
+  const [formValues, setFormValues] = useState({
+    title: aa?.title || "",
+    alltext: aa?.alltext || "",
+    summary: aa?.summary || "",
+    description: aa?.description || "",
+    imageurl: aa?.imageurl || "",
+    category: aa?.category || "",
+  });
 
-  const handleFormSubmit = (values: any) => {
-    const t = values.title;
-    const a = values.alltext;
-    const s = values.summary;
-    const d = values.description;
-    const u = values.imageurl;
-    const c = values.category;
-    const currentUser = getCurrentUser();
-
-
-    const postArticle = {
-      title: t,
-      alltext: a,
-      summary: s,
-      description: d,
-      imageurl: u,
-      authorid: currentUser.id,
-      category: c,
-    };
-
-    
-
-    if (props.isNew == false) {
-      console.log(`path: ${api.uri}/articles${props.aid}`);
-      axios
-        .put(`${api.uri}/articles/${props.aid}`, postArticle, {
-          headers: {
-            Authorization: `Basic ${localStorage.getItem("aToken")}`,
-          },
-        })
-        .then((res) => {
-          alert("Article updated");
-          console.log(res.data);
-          localStorage.removeItem("e");
-          navigate("/");
-          window.location.reload();
-        });
-    } else {
-      console.log(`path: ${api.uri}/articles`);
-      axios
-        .post(`${api.uri}/articles`, postArticle, {
-          headers: {
-            Authorization: `Basic ${localStorage.getItem("aToken")}`,
-          },
-        })
-        .then((res) => {
-          alert("New Article created");
-          console.log(res.data);
-          navigate("/");
-          window.location.reload();
-        });
-    }
-
-    
-
-    
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormValues({ ...formValues, [e.target.name]: e.target.value });
   };
 
-  const { Option } = Select;
-  const [selectedOption, setSelectedOption] = useState('');
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    setFormValues({ ...formValues, category: value });
+  };
 
-    const handleSelectChange = (value: string) => {
-        setSelectedOption(value);
-    };
+  const handleSubmit = async () => {
+    setLoading(true);
+    const currentUser = getCurrentUser();
+    const payload = { ...formValues, authorid: currentUser.id };
 
+    try {
+      if (!isNew) {
+        await axios.put(`${api.uri}/articles/${aid}`, payload, {
+          headers: { Authorization: `Basic ${localStorage.getItem("aToken")}` },
+        });
+        alert("Article updated");
+      } else {
+        await axios.post(`${api.uri}/articles`, payload, {
+          headers: { Authorization: `Basic ${localStorage.getItem("aToken")}` },
+        });
+        alert("New article created");
+      }
+      localStorage.removeItem("e");
+      navigate("/");
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save article, check network or inputs.");
+    } finally {
+      setLoading(false);
+      setIsShow(false);
+    }
+  };
 
   return (
     <>
-      <Button
-        icon={<EditOutlined />}
-        onClick={() => {
-          setIsShow(true);
-        }}
-      />
-      <Modal
-        open={isShow}
-        onCancel={() => {
-          setIsShow(false);
-        }}
-        title="Welcome Blogger"
-        footer={[]}
+      <button
+        onClick={() => setIsShow(true)}
+        className="flex items-center px-3 py-2 bg-fire-bush-300 text-white rounded-lg hover:bg-fire-bush-600 transition"
       >
-        <p></p>
-        {props.isNew ? (
-          <Title level={3} style={{ color: "#0032b3" }}>
-            Create New Article
-          </Title>
-        ) : (
-          <Title level={3} style={{ color: "#0032b3" }}>
-            Update Article
-          </Title>
-        )}
-        <Form name="article" onFinish={(values) => handleFormSubmit(values)}>
-          
-        <Form.Item name="title" label="Title" rules={contentRules}>
-      {props.isNew? ( <Input  />):( <Input defaultValue={!props.isNew&&aa.title} />)}
-      </Form.Item>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5 mr-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.5 2.5l3 3L12 15l-4 1 1-4 9.5-9.5z" />
+        </svg>
+        {isNew ? "Create" : "Edit"}
+      </button>
 
+      {isShow && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-xl overflow-y-auto max-h-[90vh] p-6 relative">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsShow(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
 
-          <Form.Item name="category" label="Category" rules={contentRules}>
-          <Select
-          placeholder="Filter by category"
-           value={selectedOption} onChange={handleSelectChange}
-          >
-            <Option value="retrievers">Retrievers</Option>
-            <Option value="chihuahuas">Chihuahuas</Option>
-            <Option value="bulldogs">
-            Bulldogs
-            </Option>
-            <Option value="Beagles">Beagles</Option>
-          </Select>
-            
-          </Form.Item>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              {isNew ? "Create New Article" : "Update Article"}
+            </h2>
 
-          <Form.Item name="alltext" label="About me" rules={contentRules}>
-            {props.isNew ? (
-              <TextArea rows={2} />
-            ) : (
-              <TextArea rows={2} defaultValue={!props.isNew && aa.alltext} />
-            )}
-          </Form.Item>
-          <Form.Item name="summary" label="Summary">
-            {props.isNew ? (
-              <TextArea rows={2} />
-            ) : (
-              <TextArea rows={2} defaultValue={!props.isNew && aa.summary} />
-            )}
-          </Form.Item>
-          <Form.Item name="description" label="Detail Description">
-            {props.isNew ? (
-              <TextArea rows={2} />
-            ) : (
-              <TextArea
-                rows={2}
-                defaultValue={!props.isNew && aa.description}
-              />
-            )}
-          </Form.Item>
-          <Form.Item name="imageurl" label="ImageURL">
-            {props.isNew ? (
-              <Input />
-            ) : (
-              <Input defaultValue={!props.isNew && aa.imageurl} />
-            )}
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formValues.title}
+                  onChange={handleChange}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fire-bush-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Category</label>
+                <select
+                  value={formValues.category || selectedCategory}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fire-bush-500"
+                >
+                  <option value="">Select category</option>
+                  <option value="retrievers">Retrievers</option>
+                  <option value="chihuahuas">Chihuahuas</option>
+                  <option value="bulldogs">Bulldogs</option>
+                  <option value="beagles">Beagles</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">About me</label>
+                <textarea
+                  name="alltext"
+                  rows={3}
+                  value={formValues.alltext}
+                  onChange={handleChange}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fire-bush-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Summary</label>
+                <textarea
+                  name="summary"
+                  rows={2}
+                  value={formValues.summary}
+                  onChange={handleChange}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fire-bush-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Detail Description</label>
+                <textarea
+                  name="description"
+                  rows={3}
+                  value={formValues.description}
+                  onChange={handleChange}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fire-bush-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 mb-1">Image URL</label>
+                <input
+                  type="text"
+                  name="imageurl"
+                  value={formValues.imageurl}
+                  onChange={handleChange}
+                  className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fire-bush-500"
+                />
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={loading}
+                className="w-full bg-fire-bush-500 text-white py-2 rounded-md hover:bg-fire-bush-600 transition disabled:opacity-50"
+              >
+                {loading ? "Saving..." : "Submit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
