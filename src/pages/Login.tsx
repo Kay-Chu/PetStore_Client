@@ -40,7 +40,10 @@ const Login: React.FC = () => {
 
       {/* Modal */}
       {isShow && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <> {/* Gray background layer */}
+        <div
+          className="fixed inset-0 bg-gray-800/50 z-40 !m-0"
+        /><div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-8 relative">
             {/* Close button */}
             <button
@@ -73,8 +76,7 @@ const Login: React.FC = () => {
                     placeholder="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full outline-none"
-                  />
+                    className="w-full outline-none" />
                 </div>
               </div>
 
@@ -92,16 +94,14 @@ const Login: React.FC = () => {
                     <path
                       fillRule="evenodd"
                       d="M5 8V6a5 5 0 1110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h1zm2-2v2h6V6a3 3 0 00-6 0z"
-                      clipRule="evenodd"
-                    />
+                      clipRule="evenodd" />
                   </svg>
                   <input
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full outline-none"
-                  />
+                    className="w-full outline-none" />
                 </div>
               </div>
 
@@ -112,8 +112,7 @@ const Login: React.FC = () => {
                     type="checkbox"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
-                    className="h-4 w-4 text-orange-500 focus:ring-orange-400 border-gray-300 rounded"
-                  />
+                    className="h-4 w-4 text-orange-500 focus:ring-orange-400 border-gray-300 rounded" />
                   <span className="text-gray-700">Remember me</span>
                 </label>
                 <a href="#" className="text-orange-500 hover:underline">
@@ -149,7 +148,7 @@ const Login: React.FC = () => {
               <GoogleAuth />
             </div>
           </div>
-        </div>
+        </div></>
       )}
     </>
   );

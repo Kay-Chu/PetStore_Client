@@ -70,9 +70,8 @@ const Navbar = ({ currentUser, logOut }) => {
         {/* Mobile menu button */}
         <div className="md:hidden">
           <Button
-            type="primary"
             onClick={toggleDrawer}
-            className="bg-blue-500 border-blue-500"
+            className="bg-fire-bush-500 border-fire-bush-500 hover:bg-fire-bush-400 active:bg-fire-bush-400 text-white"
           >
             <MenuOutlined />
           </Button>
